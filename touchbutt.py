@@ -75,16 +75,12 @@ class LabelButt(Gtk.DrawingArea):
 
     def draw_event(self, pdoc, cr):
 
-        self.layout = PangoCairo.create_layout(cr)
-        self.layout.set_font_description(self.fd)
-
         rect = pdoc.get_allocation()
         #print("alloc", rect.width, rect.height)
+        #print("ww ", rect.width, rect.height)
 
         #ctx = self.get_style_context()
         #fg_color = ctx.get_color(Gtk.StateFlags.NORMAL)
-
-        #print("ww ", rect.width, rect.height)
 
         if self.pressed:
             cr.set_source_rgba(*list(self.bgcolor3))
@@ -101,16 +97,44 @@ class LabelButt(Gtk.DrawingArea):
 
         cr.set_source_rgba(*list(self.fgcolor))
 
-        self.layout.set_text(self.text, len(self.text))
+        if "\n"in self.text:
+            #print("multi")
+            ypos = 0; layxx = []; layyy = []; laytxt = []
+            for aa in self.text.split():
+                self.layout.set_text(aa, len(aa))
+                (pr, lr) = self.layout.get_extents()
+                layxx.append(lr.width / Pango.SCALE)
+                layyy.append(lr.height / Pango.SCALE)
+                laytxt.append(aa)
 
-        (pr, lr) = self.layout.get_extents()
-        xx = lr.width / Pango.SCALE; yy = lr.height / Pango.SCALE;
+            yyext = 0;
+            for bb in layyy:
+                yyext += bb
 
-        cr.move_to(rect.width / 2 - xx / 2, rect.height / 2 - yy / 2)
-        PangoCairo.show_layout(cr, self.layout)
+            cnt = 0
+            for xx in layxx:
+                self.layout.set_text(laytxt[cnt], len(laytxt[cnt]))
+                yy = layyy[cnt]
+                cr.move_to(rect.width / 2 - xx / 2, ypos + rect.height / 2 - yyext / 2)
+                PangoCairo.show_layout(cr, self.layout)
+                ypos += yy
+                cnt += 1
 
-        #cr.move_to(10, 10)
-        #cr.line_to(50, 50)
+        else:
+            self.layout.set_text(self.text, len(self.text))
+            (pr, lr) = self.layout.get_extents()
+            xx = lr.width / Pango.SCALE; yy = lr.height / Pango.SCALE;
+
+            cr.move_to(rect.width / 2 - xx / 2, rect.height / 2 - yy / 2)
+            PangoCairo.show_layout(cr, self.layout)
+
+
+        #cr.move_to(0, 0)
+        #cr.line_to(rect.width, rect.height)
+
+        #cr.move_to(rect.width, 0)
+        #cr.line_to(0, rect.height)
+
         #cr.stroke()
 
         return rect.width

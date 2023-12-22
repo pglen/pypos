@@ -80,8 +80,8 @@ class TouchWin():
         window.set_accept_focus(True)
         window.activate_focus()
         window.set_decorated(0)
-        window.set_default_size(3*www/4, 3*hhh/4)
-        #window.set_default_size(www, hhh)
+        #window.set_default_size(3*www/4, 3*hhh/4)
+        window.set_default_size(www, hhh)
 
         window.set_focus_on_map(True)
         window.connect("destroy", OnExit)
@@ -110,7 +110,7 @@ class TouchWin():
             hbox2 = Gtk.HBox()
             hbox2.set_homogeneous(True)
             for bb in range(4):
-                tb = TouchButt("Hello \n%d %d" % (aa, bb), self.callb, ccc)
+                tb = TouchButt("Hello\n%d %d" % (aa, bb), self.callb, ccc)
                 hbox2.pack_start(tb, 1, 1, 0)
 
             vbox2.pack_start(hbox2, 1, 1, 0)
