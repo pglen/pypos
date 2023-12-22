@@ -35,8 +35,8 @@ class LabelButt(Gtk.DrawingArea):
         self.callb = callb
 
         fsize = 20
-        #fname = "Monospace"
-        fontname = "Courier"
+        fontname = "Monospace"
+        #fontname = "Courier"
 
         self.setfont(fontname, fsize)
         self.add_events(Gdk.EventMask.ALL_EVENTS_MASK)

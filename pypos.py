@@ -18,7 +18,7 @@ from gi.repository import PangoCairo
 import pypossql
 from touchbutt import *
 
-gui_testmode = 0
+gui_testmode = 1
 tbarr = []
 # ------------------------------------------------------------------------
 # This is open source sticker program. Written in python.
@@ -40,13 +40,23 @@ config_dir = os.path.expanduser("~/.pypos")
 def randc():
     return random.random() * 0xffff
 
+        #ccc = Gdk.Color(randc(), randc(), randc())
+
+def randcolstr(start = 0, endd = 255):
+    rr =  random.randint(start, endd)
+    gg =  random.randint(start, endd)
+    bb =  random.randint(start, endd)
+    strx = "#%02x%02x%02x" % (rr, gg, bb)
+    return strx
+
 class xSpacer(Gtk.HBox):
 
     def __init__(self, sp = None):
         GObject.GObject.__init__(self)
         #self.pack_start()
         if gui_testmode:
-            col = randcolstr(100, 200)
+            col = randcolstr() #100, 200)
+            print("xSpacer", col)
             self.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse(col))
         if sp == None:
             sp = 6
@@ -81,7 +91,8 @@ class TouchWin():
         window.activate_focus()
         window.set_decorated(0)
         #window.set_default_size(3*www/4, 3*hhh/4)
-        window.set_default_size(www, hhh)
+        window.set_default_size(7*www/8, 7*hhh/8)
+        #window.set_default_size(www, hhh)
 
         window.set_focus_on_map(True)
         window.connect("destroy", OnExit)
@@ -90,6 +101,7 @@ class TouchWin():
         hbox = Gtk.HBox();
 
         vbox2 = Gtk.VBox();vbox3 = Gtk.VBox(); vbox4 = Gtk.VBox()
+        vbox2a = Gtk.VBox()
 
         hbox.pack_start(Gtk.Label.new("  "), 0,0,0);
         hbox.pack_start(vbox2, 1,1,0);
@@ -99,16 +111,41 @@ class TouchWin():
         hbox.pack_start(vbox4, 1,1,0);
         hbox.pack_start(Gtk.Label.new("  "), 0,0,0);
 
+        vbox.pack_start(xSpacer(), 0, 0, False)
+
         vbox.pack_start(Gtk.Label.new(" "), 0,0,0);
         vbox.pack_start(hbox, 1, 1, False)
         vbox.pack_start(Gtk.Label.new(" "), 0,0,0);
 
-        # Left row -----------------------------------------------------
-        ccc = Gdk.Color(0xeeee, 0xeeee, 0xeeee)
-
+        # Top row -----------------------------------------------------
+        ccc = Gdk.Color(0xdddd, 0xdddd, 0xdddd)
+        col = randcolstr(100, 200)
         for aa in range(6):
             hbox2 = Gtk.HBox()
             hbox2.set_homogeneous(True)
+
+            hbox2.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse(col))
+
+            for bb in range(4):
+                tb = TouchButt("Top\n%d %d" % (aa, bb), self.callb, ccc)
+                hbox2.pack_start(tb, 1, 1, 0)
+
+            vbox2a.pack_start(hbox2, 1, 1, 0)
+            if aa == 0:
+                vbox2.pack_start(Gtk.Label.new(" "), 0,0,0);
+
+        #vbox.pack_start(vbox2a, 1,1,0);
+
+        # Left row -----------------------------------------------------
+        ccc = Gdk.Color(0xeeee, 0xeeee, 0xeeee)
+
+        col = randcolstr(100, 200)
+        for aa in range(6):
+            hbox2 = Gtk.HBox()
+            hbox2.set_homogeneous(True)
+
+            hbox2.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse(col))
+
             for bb in range(4):
                 tb = TouchButt("Hello\n%d %d" % (aa, bb), self.callb, ccc)
                 hbox2.pack_start(tb, 1, 1, 0)
@@ -121,7 +158,7 @@ class TouchWin():
         textx[0] = ["1 ", "2 ", "3 ", "+ "]
         textx[1] = ["4 ", "5 ", "6 ", "= "]
         textx[2] = ["7 ", "8 ", "9 ", "* "]
-        textx[3] = ["  ", "0", "  ", "= "]
+        textx[3] = [" .", "0", "del", "= "]
 
         # Middle row -----------------------------------------------------
         vbox33 = Gtk.VBox()
@@ -134,9 +171,13 @@ class TouchWin():
         #ccc = Gdk.Color(randc(), randc(), randc())
         ccc = Gdk.Color(0xdddd, 0xdddd, 0xdddd)
 
+        col = randcolstr(100, 200)
+
         for aa in range(4):
             hbox2 = Gtk.HBox()
             hbox2.set_homogeneous(True)
+            hbox2.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse(col))
+
             for bb in range(4):
                 tb = TouchButt(textx[aa][bb], self.calb, ccc)
                 #tb = TouchButt("Calc %d %d" % (aa, bb), self.calb)
@@ -150,11 +191,15 @@ class TouchWin():
         # Right row ------------------------------------------------------
         ccc = Gdk.Color(0xeeee, 0xeeee, 0xeeee)
 
+        col = randcolstr(100, 200)
+
         vbox44 = Gtk.VBox()
         for aa in range(4):
             hbox2 = Gtk.HBox()
+            hbox2.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse(col))
+
             for bb in range(4):
-                tb = TouchButt("Result %d %d" % (aa, bb), self.callx, ccc)
+                tb = TouchButt("Result \n%d %d" % (aa, bb), self.callx, ccc)
                 hbox2.pack_start(tb, 1, 1, 0)
             vbox44.pack_start(hbox2, 1, 1, 0)
 
@@ -180,7 +225,7 @@ class TouchWin():
         vbox.pack_start(xSpacer(), 0, 0, False)
 
         #vbox.pack_start(Gtk.Label.new(" "), 0, 0, False)
-        vbox.pack_start(xSpacer(), 0, 0, False)
+        #vbox.pack_start(xSpacer(), 0, 0, False)
 
         window.connect("motion-notify-event", self.win_area_motion)
 
@@ -228,12 +273,10 @@ class TouchWin():
         hbox3 = Gtk.HBox(); hbox3.pack_start(lab3, 0, 0, False )
         return hbox3
 
-
     def newcode(self, line):
         self.barcode.set_text(line)
         print(posdb.get(line))
         self.item.set_text("This is item '" + line + "'")
-
 
 def OnExit(win):
     Gtk.main_quit()
