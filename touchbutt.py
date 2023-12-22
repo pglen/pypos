@@ -23,13 +23,16 @@ def str2float( col):
 
 class LabelButt(Gtk.DrawingArea):
 
-    def __init__(self, front, callb = None, toolt=""):
+    def __init__(self, front, callb = None, colx = None, toolt=None):
         Gtk.DrawingArea.__init__(self)
 
         self.bgcolor  = str2float("#bbbbbb")
         self.bgcolor2 = str2float("#aaaaaa")
         self.fgcolor  = str2float("#333333")
         self.bgcolor3 = str2float("ccccccc")
+
+        if colx:
+            self.bgcolor2 = str2float(colx)
 
         self.pressed  = False
         self.callb = callb
@@ -51,7 +54,7 @@ class LabelButt(Gtk.DrawingArea):
         self.connect("draw", self.draw_event)
 
         if toolt:
-            self.label.set_tooltip_text(toolt)
+            self.set_tooltip_text(toolt)
 
         self.mouse_in = False
 
@@ -200,11 +203,11 @@ class LabelButt(Gtk.DrawingArea):
 
 class TouchButt(Gtk.HBox):
 
-    def __init__(self, txt, callb, colx = None):
+    def __init__(self, txt, callb, colx = None, ttip = None, ):
 
         Gtk.HBox.__init__(self, txt)
 
-        self.lab = LabelButt(txt, callb)
+        self.lab = LabelButt(txt, callb, colx, ttip)
 
         self.set_margin_top(2)
         self.set_margin_bottom(2)
@@ -218,11 +221,3 @@ class TouchButt(Gtk.HBox):
         #else:
         #    self.modify_bg(Gtk.StateType.NORMAL, col)
         #
-        #if colx:
-        #    self.modify_bg(Gtk.StateType.NORMAL, colx)
-        #else:
-        #    self.modify_bg(Gtk.StateType.NORMAL, Gdk.Color(0xffff, 0xffff, 0xffff))
-
-        #self.modify_bg(Gtk.StateType.NORMAL, Gdk.Color(randc(), randc(), randc()))
-        #self.modify_fg(Gtk.StateType.NORMAL, Gdk.Color(randc(), randc(), randc()))
-

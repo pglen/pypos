@@ -18,7 +18,7 @@ from gi.repository import PangoCairo
 import pypossql
 from touchbutt import *
 
-gui_testmode = 1
+gui_testmode = 0
 tbarr = []
 # ------------------------------------------------------------------------
 # This is open source sticker program. Written in python.
@@ -113,28 +113,28 @@ class TouchWin():
 
         vbox.pack_start(xSpacer(), 0, 0, False)
 
+        topstrarr = "Main", "Calculator", "Inventory", "Admin", "Calendar"
+
+        # Top row -----------------------------------------------------
+        hbox3a = Gtk.HBox()
+        ccc = Gdk.Color(0xaaaa, 0xdddd, 0xdddd)
+        col = randcolstr(100, 200)
+        for aa in range(1):
+            hbox2t = Gtk.HBox()
+            hbox2t.set_homogeneous(True)
+            #hbox2t.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse(col))
+            for bb in topstrarr:
+                tb = TouchButt("%s" % (bb), self.callb, "#ffffdd")
+                hbox2t.pack_start(tb, 1, 1, 0)
+            hbox3a.pack_start(hbox2t, 1, 1, 0);
+
+        hbox3a.set_size_request(-1, 30)
+        vbox.pack_start(hbox3a, 0, 0, False);
+
         vbox.pack_start(Gtk.Label.new(" "), 0,0,0);
         vbox.pack_start(hbox, 1, 1, False)
         vbox.pack_start(Gtk.Label.new(" "), 0,0,0);
 
-        # Top row -----------------------------------------------------
-        ccc = Gdk.Color(0xdddd, 0xdddd, 0xdddd)
-        col = randcolstr(100, 200)
-        for aa in range(6):
-            hbox2 = Gtk.HBox()
-            hbox2.set_homogeneous(True)
-
-            hbox2.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse(col))
-
-            for bb in range(4):
-                tb = TouchButt("Top\n%d %d" % (aa, bb), self.callb, ccc)
-                hbox2.pack_start(tb, 1, 1, 0)
-
-            vbox2a.pack_start(hbox2, 1, 1, 0)
-            if aa == 0:
-                vbox2.pack_start(Gtk.Label.new(" "), 0,0,0);
-
-        #vbox.pack_start(vbox2a, 1,1,0);
 
         # Left row -----------------------------------------------------
         ccc = Gdk.Color(0xeeee, 0xeeee, 0xeeee)
@@ -143,11 +143,9 @@ class TouchWin():
         for aa in range(6):
             hbox2 = Gtk.HBox()
             hbox2.set_homogeneous(True)
-
-            hbox2.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse(col))
-
+            #hbox2.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse(col))
             for bb in range(4):
-                tb = TouchButt("Hello\n%d %d" % (aa, bb), self.callb, ccc)
+                tb = TouchButt("Hello\n%d %d" % (aa, bb), self.callb, "#ddccdd")
                 hbox2.pack_start(tb, 1, 1, 0)
 
             vbox2.pack_start(hbox2, 1, 1, 0)
@@ -176,10 +174,10 @@ class TouchWin():
         for aa in range(4):
             hbox2 = Gtk.HBox()
             hbox2.set_homogeneous(True)
-            hbox2.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse(col))
+            #hbox2.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse(col))
 
             for bb in range(4):
-                tb = TouchButt(textx[aa][bb], self.calb, ccc)
+                tb = TouchButt(textx[aa][bb], self.calb, "#ddffdd")
                 #tb = TouchButt("Calc %d %d" % (aa, bb), self.calb)
                 tbarr.append(tb)
 
@@ -196,10 +194,10 @@ class TouchWin():
         vbox44 = Gtk.VBox()
         for aa in range(4):
             hbox2 = Gtk.HBox()
-            hbox2.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse(col))
+            #hbox2.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse(col))
 
             for bb in range(4):
-                tb = TouchButt("Result \n%d %d" % (aa, bb), self.callx, ccc)
+                tb = TouchButt("Result \n%d %d" % (aa, bb), self.callx, "#ddffff")
                 hbox2.pack_start(tb, 1, 1, 0)
             vbox44.pack_start(hbox2, 1, 1, 0)
 
@@ -236,7 +234,8 @@ class TouchWin():
     def win_area_motion(self, area, event):
         #print("window motion event", event.get_state(), event.x, event.y)
         if event.get_state() & Gdk.ModifierType.BUTTON1_MASK:
-            print("drag",  event.x, event.y)
+            #print("drag",  event.x, event.y)
+            pass
 
     def calb(self, win, arg1, arg2):
         #print("calb", win, arg1, arg2)
