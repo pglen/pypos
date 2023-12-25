@@ -15,10 +15,10 @@ gi.require_version('PangoCairo', '1.0')
 
 from gi.repository import PangoCairo
 
-import pypossql
+#from pypossql import *
+from pyposutils import *
 from touchbutt import *
 
-gui_testmode = 0
 tbarr = []
 # ------------------------------------------------------------------------
 # This is open source sticker program. Written in python.
@@ -27,6 +27,7 @@ GAP = 4                 # Gap in pixels
 TABSTOP = 4
 FGCOLOR  = "#000000"
 BGCOLOR  = "#ffff88"
+
 
 sdev = "/dev/ttyS0"
 fd = None
@@ -37,31 +38,6 @@ verbose = False
 # Where things are stored (backups, orgs, macros)
 config_dir = os.path.expanduser("~/.pypos")
 
-def randc():
-    return random.random() * 0xffff
-
-        #ccc = Gdk.Color(randc(), randc(), randc())
-
-def randcolstr(start = 0, endd = 255):
-    rr =  random.randint(start, endd)
-    gg =  random.randint(start, endd)
-    bb =  random.randint(start, endd)
-    strx = "#%02x%02x%02x" % (rr, gg, bb)
-    return strx
-
-class xSpacer(Gtk.HBox):
-
-    def __init__(self, sp = None):
-        GObject.GObject.__init__(self)
-        #self.pack_start()
-        if gui_testmode:
-            col = randcolstr() #100, 200)
-            print("xSpacer", col)
-            self.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse(col))
-        if sp == None:
-            sp = 6
-        self.set_size_request(sp, sp)
-
 
 class TouchWin():
 
@@ -71,9 +47,14 @@ class TouchWin():
         disp = disp2.get_default()
         #print( disp)
         scr = disp.get_default_screen()
+
+        import warnings
+        warnings.simplefilter("ignore")
         ptr = disp.get_pointer()
         mon = scr.get_monitor_at_point(ptr[1], ptr[2])
         geo = scr.get_monitor_geometry(mon)
+        warnings.simplefilter("default")
+
         www = geo.width; hhh = geo.height
         xxx = geo.x;     yyy = geo.y
 
@@ -96,6 +77,15 @@ class TouchWin():
 
         window.set_focus_on_map(True)
         window.connect("destroy", OnExit)
+
+        mt = maintouch(window)
+
+
+class maintouch():
+
+    def __init__(self, window):
+
+        self.window = window
 
         vbox = Gtk.VBox();
         hbox = Gtk.HBox();
@@ -121,10 +111,10 @@ class TouchWin():
         col = randcolstr(100, 200)
         for aa in range(1):
             hbox2t = Gtk.HBox()
-            hbox2t.set_homogeneous(True)
+            #hbox2t.set_homogeneous(True)
             #hbox2t.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse(col))
             for bb in topstrarr:
-                tb = TouchButt("%s" % (bb), self.callb, "#ffffdd")
+                tb = TouchButt("%s" % (bb), self.callbm, "#ffffdd")
                 hbox2t.pack_start(tb, 1, 1, 0)
             hbox3a.pack_start(hbox2t, 1, 1, 0);
 
@@ -135,28 +125,28 @@ class TouchWin():
         vbox.pack_start(hbox, 1, 1, False)
         vbox.pack_start(Gtk.Label.new(" "), 0,0,0);
 
-
         # Left row -----------------------------------------------------
         ccc = Gdk.Color(0xeeee, 0xeeee, 0xeeee)
 
         col = randcolstr(100, 200)
         for aa in range(6):
             hbox2 = Gtk.HBox()
-            hbox2.set_homogeneous(True)
+            #hbox2.set_homogeneous(True)
             #hbox2.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse(col))
             for bb in range(4):
                 tb = TouchButt("Hello\n%d %d" % (aa, bb), self.callb, "#ddccdd")
                 hbox2.pack_start(tb, 1, 1, 0)
 
             vbox2.pack_start(hbox2, 1, 1, 0)
-            if aa == 0:
-                vbox2.pack_start(Gtk.Label.new(" "), 0,0,0);
+            #if aa == 2:
+            #    vbox2.pack_start(Gtk.Label.new(" "), 0,0,0);
 
         textx = [1,2,3,4]
-        textx[0] = ["1 ", "2 ", "3 ", "+ "]
-        textx[1] = ["4 ", "5 ", "6 ", "= "]
-        textx[2] = ["7 ", "8 ", "9 ", "* "]
-        textx[3] = [" .", "0", "del", "= "]
+        textx[0] = ["1",   "2",  "3 ",    "+"]
+        textx[1] = ["4",   "5",  "6 ",    "-"]
+        textx[2] = ["7",   "8",  "9 ",    "*"]
+        textx[2] = [".",   "0",  "Ret",   "%"]
+        textx[3] = ["Bs",  ".00", "Del",  "/"]
 
         # Middle row -----------------------------------------------------
         vbox33 = Gtk.VBox()
@@ -173,12 +163,12 @@ class TouchWin():
 
         for aa in range(4):
             hbox2 = Gtk.HBox()
-            hbox2.set_homogeneous(True)
+            #hbox2.set_homogeneous(True)
             #hbox2.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse(col))
 
             for bb in range(4):
-                tb = TouchButt(textx[aa][bb], self.calb, "#ddffdd")
-                #tb = TouchButt("Calc %d %d" % (aa, bb), self.calb)
+                tb = TouchButt(textx[aa][bb], self.callb2, "#ddffdd")
+                #tb = TouchButt("Calc %d %d" % (aa, bb), self.callb2)
                 tbarr.append(tb)
 
                 hbox2.pack_start(tb, 1, 1, 0)
@@ -197,7 +187,7 @@ class TouchWin():
             #hbox2.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse(col))
 
             for bb in range(4):
-                tb = TouchButt("Result \n%d %d" % (aa, bb), self.callx, "#ddffff")
+                tb = TouchButt("Result \n%d %d" % (aa, bb), self.callb3, "#ddffff")
                 hbox2.pack_start(tb, 1, 1, 0)
             vbox44.pack_start(hbox2, 1, 1, 0)
 
@@ -225,11 +215,11 @@ class TouchWin():
         #vbox.pack_start(Gtk.Label.new(" "), 0, 0, False)
         #vbox.pack_start(xSpacer(), 0, 0, False)
 
-        window.connect("motion-notify-event", self.win_area_motion)
+        self.window.connect("motion-notify-event", self.win_area_motion)
 
         # ---------------------------------------------------------------
-        window.add(vbox)
-        window.show_all()
+        self.window.add(vbox)
+        self.window.show_all()
 
     def win_area_motion(self, area, event):
         #print("window motion event", event.get_state(), event.x, event.y)
@@ -237,31 +227,57 @@ class TouchWin():
             #print("drag",  event.x, event.y)
             pass
 
-    def calb(self, win, arg1, arg2):
-        #print("calb", win, arg1, arg2)
-        self.logx(arg2)
-        pass
+    # ---------------------------------------------------------------------
 
     def callb(self, win, arg1, arg2):
         #print("callb", win, arg1, arg2)
-        self.logx(arg2)
+        print("callb", arg2.replace("\n", " "))
+        self.logx(arg2.replace("\n", " "))
         pass
 
-    def callx(self, win, arg1, arg2):
-        #print("callx", win, arg1, arg2)
-        self.logx(arg2)
+    def callbm(self, win, arg1, arg2):
+        #print("callb2", win, arg1, arg2)
+        print("callbm", arg2.replace("\n", " "))
+        self.logx(arg2.replace("\n", " "))
+
+        if arg2 == "Main":
+                print("Main")
+        else:
+            print("Other")
+        pass
+
+    def callb2(self, win, arg1, arg2):
+        #print("callb2", win, arg1, arg2)
+        print("callb2", arg2.replace("\n", " "))
+        self.logx(arg2.replace("\n", " "))
+        pass
+
+    def callb3(self, win, arg1, arg2):
+        #print("callb3", win, arg1, arg2)
+        print("callb3", arg2.replace("\n", " "))
+        self.logx(arg2.replace("\n", " "))
         pass
 
     def logx(self, arg2):
 
         tb = self.botright.get_buffer()
         ttt = tb.get_text(tb.get_start_iter(), tb.get_end_iter(), False)
-        tb.set_text(ttt + arg2 + "\n")
+        tb.set_text(ttt + "'" +  arg2 + "'" + "\n")
         self.botright.scroll_to_iter(tb.get_end_iter(), 0, False, 1., 0)
         adj = self.scrollx.get_vadjustment()
         #adj.set_value(adj.get_upper() - adj.get_page_size())
         adj.set_value(adj.get_upper() )
 
+
+    def logx2(self, arg2):
+
+        tb = self.topmid.get_buffer()
+        ttt = tb.get_text(tb.get_start_iter(), tb.get_end_iter(), False)
+        tb.set_text(ttt + "'" +  arg2 + "'" + "\n")
+        self.botright.scroll_to_iter(tb.get_end_iter(), 0, False, 1., 0)
+        adj = self.scrollx.get_vadjustment()
+        #adj.set_value(adj.get_upper() - adj.get_page_size())
+        adj.set_value(adj.get_upper() )
 
     def click_ok(self, win, aa):
         Gtk.main_quit()
@@ -276,6 +292,7 @@ class TouchWin():
         self.barcode.set_text(line)
         print(posdb.get(line))
         self.item.set_text("This is item '" + line + "'")
+
 
 def OnExit(win):
     Gtk.main_quit()
@@ -355,7 +372,7 @@ def refresh_screen():
 
 if __name__ == '__main__':
 
-    global mainwin, posdb
+    global mainwin #, posdb
 
     try:
         if not os.path.isdir(config_dir):
@@ -367,7 +384,7 @@ if __name__ == '__main__':
         print("Cannot access config dir:", config_dir)
         sys.exit(1)
 
-    posdb = pypossql.Possql(config_dir + "/data")
+    #posdb = pypossql.Possql(config_dir + "/data")
 
     opts = []; args = []
     try:

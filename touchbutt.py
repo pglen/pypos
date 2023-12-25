@@ -205,7 +205,7 @@ class TouchButt(Gtk.HBox):
 
     def __init__(self, txt, callb, colx = None, ttip = None, ):
 
-        Gtk.HBox.__init__(self, txt)
+        Gtk.HBox.__init__(self) #, txt)
 
         self.lab = LabelButt(txt, callb, colx, ttip)
 
