@@ -38,11 +38,14 @@ verbose = False
 # Where things are stored (backups, orgs, macros)
 config_dir = os.path.expanduser("~/.pypos")
 
+topstrarr = "Main", "Calculator", "Inventory", "Admin", "Calendar"
+
 
 class TouchWin():
 
     def __init__(self):
 
+        global www, hhh
         disp2 = Gdk.Display()
         disp = disp2.get_default()
         #print( disp)
@@ -70,12 +73,12 @@ class TouchWin():
         window.set_events(Gdk.EventMask.ALL_EVENTS_MASK )
         window.set_accept_focus(True)
         window.activate_focus()
-        window.set_decorated(0)
+        window.set_decorated(1)
         #window.set_default_size(3*www/4, 3*hhh/4)
         window.set_default_size(7*www/8, 7*hhh/8)
         #window.set_default_size(www, hhh)
 
-        window.set_focus_on_map(True)
+        # window.set_focus_on_map(True)
         window.connect("destroy", OnExit)
 
         mt = maintouch(window)
@@ -85,11 +88,13 @@ class maintouch():
 
     def __init__(self, window):
 
-        self.window = window
+        #self.window = Gtk.Window.new(Gtk.WindowType.POPUP)
+        #self.window = Gtk.Window.new(Gtk.WindowType.TOPLEVEL)
+        self.topwin = window
+        #self.window.set_position(Gtk.WindowPosition.CENTER)
+        #self.window.set_default_size(7*www/8, 7*hhh/8)
 
-        vbox = Gtk.VBox();
-        hbox = Gtk.HBox();
-
+        vbox = Gtk.VBox();  hbox = Gtk.HBox();
         vbox2 = Gtk.VBox();vbox3 = Gtk.VBox(); vbox4 = Gtk.VBox()
         vbox2a = Gtk.VBox()
 
@@ -103,7 +108,6 @@ class maintouch():
 
         vbox.pack_start(xSpacer(), 0, 0, False)
 
-        topstrarr = "Main", "Calculator", "Inventory", "Admin", "Calendar"
 
         # Top row -----------------------------------------------------
         hbox3a = Gtk.HBox()
@@ -215,11 +219,15 @@ class maintouch():
         #vbox.pack_start(Gtk.Label.new(" "), 0, 0, False)
         #vbox.pack_start(xSpacer(), 0, 0, False)
 
-        self.window.connect("motion-notify-event", self.win_area_motion)
+        #self.window.connect("motion-notify-event", self.win_area_motion)
 
         # ---------------------------------------------------------------
-        self.window.add(vbox)
-        self.window.show_all()
+        #self.window.add(vbox)
+        #self.topwin.add(self.window)
+        self.topwin.add(vbox)
+
+        #self.window.show_all()
+        self.topwin.show_all()
 
     def win_area_motion(self, area, event):
         #print("window motion event", event.get_state(), event.x, event.y)
